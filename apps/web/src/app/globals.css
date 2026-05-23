@@ -2,27 +2,15 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Amiri:ital,wght@0,400;0,700;1,400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,300..700;1,14..32,300..700&family=Amiri:ital,wght@0,400;0,700;1,400&display=swap');
 
 @layer base {
-  :root {
-    --sage-50:  #f2f8f4;
-    --sage-100: #e1f0e6;
-    --sage-500: #40915f;
-    --sage-700: #265d3c;
-    --sage-900: #1b3d29;
-    --cream-50: #fdfcf8;
-    --cream-100: #f9f6ef;
-  }
-
-  html {
-    scroll-behavior: smooth;
-  }
+  html { scroll-behavior: smooth; }
 
   body {
-    background-color: var(--cream-50);
-    color: #1c2e22;
+    background-color: #fdfcf8;
     -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
   [lang="ar"], [dir="rtl"] {
@@ -34,45 +22,27 @@
     direction: rtl;
     text-align: right;
     font-size: 1.3rem;
-    line-height: 2.4;
+    line-height: 2.5;
     color: #1b3d29;
   }
 }
 
 @layer components {
-  .btn-primary {
-    @apply bg-sage-600 hover:bg-sage-700 active:bg-sage-800
-           text-white px-5 py-2.5 rounded-xl font-medium text-sm
-           transition-all duration-150
-           focus:outline-none focus-visible:ring-2 focus-visible:ring-sage-400 focus-visible:ring-offset-2
-           shadow-sm hover:shadow-md disabled:opacity-40 disabled:cursor-not-allowed disabled:shadow-none;
-  }
-
-  .btn-ghost {
-    @apply text-sage-700 hover:bg-sage-50 px-4 py-2 rounded-xl text-sm font-medium
-           transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-sage-400;
-  }
-
   .card {
-    @apply bg-white rounded-2xl shadow-card border border-sage-100;
+    @apply bg-white rounded-2xl border border-sage-100 shadow-card;
   }
 
   .citation-card {
-    @apply border border-sage-100 bg-sage-50 rounded-xl p-4 mt-2
-           transition-colors hover:border-sage-200;
+    @apply border border-sage-100 bg-sage-50/60 rounded-xl p-4 transition-colors hover:border-sage-200;
   }
 
-  .badge-high   { @apply text-sage-700 bg-sage-100 border border-sage-200; }
+  .badge-high   { @apply text-sage-700 bg-sage-50 border border-sage-200; }
   .badge-medium { @apply text-amber-700 bg-amber-50 border border-amber-200; }
   .badge-low    { @apply text-red-600 bg-red-50 border border-red-200; }
-
-  .tab-active   { @apply bg-sage-600 text-white shadow-sm; }
-  .tab-inactive { @apply text-sage-700 hover:bg-sage-50 border border-sage-200; }
-
-  .input-base {
-    @apply w-full border border-sage-200 rounded-xl px-4 py-3 text-sm
-           bg-white placeholder-sage-300 text-sage-900
-           focus:outline-none focus:ring-2 focus:ring-sage-400 focus:border-transparent
-           transition-shadow;
-  }
 }
+
+/* Scrollbar styling */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #c3e2cd; border-radius: 99px; }
+::-webkit-scrollbar-thumb:hover { background: #96cca8; }
