@@ -1,0 +1,42 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --green-dark: #1A5C38;
+    --green-mid: #2E8648;
+    --green-light: #D6EEDB;
+    --gold: #C9A02A;
+  }
+
+  /* Arabic RTL font support */
+  [lang="ar"],
+  [dir="rtl"] {
+    font-family: 'Amiri', 'Scheherazade New', 'Arial', serif;
+  }
+
+  .arabic-text {
+    font-family: 'Amiri', 'Scheherazade New', serif;
+    direction: rtl;
+    text-align: right;
+    font-size: 1.25rem;
+    line-height: 2.2;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-green-800 hover:bg-green-700 text-white px-6 py-3 rounded-xl
+           font-medium transition-colors duration-200 focus:outline-none
+           focus:ring-2 focus:ring-green-600 focus:ring-offset-2;
+  }
+
+  .citation-card {
+    @apply border border-green-200 bg-green-50 rounded-xl p-4 mt-3;
+  }
+
+  .confidence-high   { @apply text-green-700 bg-green-100; }
+  .confidence-medium { @apply text-amber-700 bg-amber-100; }
+  .confidence-low    { @apply text-red-700 bg-red-100; }
+}

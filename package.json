@@ -1,0 +1,28 @@
+{
+  "name": "noorai",
+  "version": "1.0.0",
+  "private": true,
+  "description": "AI-Powered Islamic Q&A Application",
+  "workspaces": [
+    "apps/*",
+    "packages/*",
+    "services/*"
+  ],
+  "scripts": {
+    "dev:web": "yarn workspace @noorai/web dev",
+    "dev:api": "yarn workspace @noorai/api dev",
+    "build:web": "yarn workspace @noorai/web build",
+    "build:mobile": "yarn workspace @noorai/mobile build",
+    "ingest:quran": "yarn workspace @noorai/ingestion ingest:quran",
+    "ingest:hadith": "yarn workspace @noorai/ingestion ingest:hadith",
+    "db:migrate": "yarn workspace @noorai/api db:migrate",
+    "test": "yarn workspaces run test"
+  },
+  "devDependencies": {
+    "turbo": "^2.0.0"
+  },
+  "packageManager": "yarn@4.0.0",
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}
