@@ -80,7 +80,7 @@ export function Sidebar() {
 
       {/* Top bar */}
       <div className="flex items-center justify-between px-4 py-4 border-b border-sage-50">
-        <Link href="/" className="flex items-center gap-2.5">
+        <Link href="/home" className="flex items-center gap-2.5">
           <Logo size={28} />
           <span className="text-base font-bold text-sage-900 tracking-tight">NoorAI</span>
         </Link>
@@ -103,7 +103,7 @@ export function Sidebar() {
         {/* Primary actions */}
         <div className="space-y-0.5">
           <NavItem
-            href="/"
+            href="/app/ask"
             label="New question"
             icon={
               <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
@@ -112,7 +112,7 @@ export function Sidebar() {
             }
           />
           <NavItem
-            href="/search"
+            href="/app/search"
             label="Search"
             icon={
               <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
@@ -122,7 +122,7 @@ export function Sidebar() {
             }
           />
           <NavItem
-            href="/saved"
+            href="/app/saved"
             label="Saved answers"
             icon={
               <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
@@ -131,7 +131,7 @@ export function Sidebar() {
             }
           />
           <NavItem
-            href="/about"
+            href="/app/about"
             label="About sources"
             icon={
               <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
@@ -158,7 +158,7 @@ export function Sidebar() {
             ].map(({ label, emoji }) => (
               <Link
                 key={label}
-                href={`/search?q=${encodeURIComponent(label)}`}
+                href={`/app/search?q=${encodeURIComponent(label)}`}
                 className="flex items-center gap-3 px-3 py-2 rounded-xl text-sm text-sage-600
                            hover:bg-sage-50 hover:text-sage-800 transition-colors group"
               >

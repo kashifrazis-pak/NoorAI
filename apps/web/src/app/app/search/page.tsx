@@ -4,10 +4,10 @@ import { useState } from 'react';
 import { search, type SearchResult } from '@/lib/api';
 
 export default function SearchPage() {
-  const [query, setQuery] = useState('');
+  const [query, setQuery]     = useState('');
   const [results, setResults] = useState<SearchResult[]>([]);
   const [loading, setLoading] = useState(false);
-  const [type, setType] = useState('all');
+  const [type, setType]       = useState('all');
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -26,36 +26,28 @@ export default function SearchPage() {
       <h1 className="text-2xl font-bold text-sage-900">Search Quran &amp; Hadith</h1>
 
       <form onSubmit={handleSearch} className="flex gap-2">
-        <input
-          value={query}
-          onChange={e => setQuery(e.target.value)}
+        <input value={query} onChange={e => setQuery(e.target.value)}
           placeholder="Search by keyword…"
           className="flex-1 bg-white border border-sage-200 rounded-xl px-4 py-2.5 text-sm
                      text-sage-900 placeholder-sage-300 focus:outline-none focus:ring-2
-                     focus:ring-sage-400 focus:border-transparent shadow-soft"
-        />
-        <select
-          value={type}
-          onChange={e => setType(e.target.value)}
+                     focus:ring-sage-400 shadow-soft"/>
+        <select value={type} onChange={e => setType(e.target.value)}
           className="bg-white border border-sage-200 rounded-xl px-3 py-2.5 text-sm
-                     text-sage-600 focus:outline-none focus:ring-2 focus:ring-sage-400 shadow-soft"
-        >
+                     text-sage-600 focus:outline-none focus:ring-2 focus:ring-sage-400 shadow-soft">
           <option value="all">All</option>
           <option value="verse">Quran</option>
           <option value="hadith">Hadith</option>
         </select>
-        <button
-          type="submit"
+        <button type="submit"
           className="bg-sage-600 hover:bg-sage-700 text-white text-sm font-medium
-                     px-5 py-2.5 rounded-xl transition-colors shadow-soft"
-        >
+                     px-5 py-2.5 rounded-xl transition-colors shadow-soft">
           Search
         </button>
       </form>
 
       {loading && (
         <div className="text-center py-10">
-          <div className="inline-block w-6 h-6 border-2 border-sage-500 border-t-transparent rounded-full animate-spin" />
+          <div className="inline-block w-6 h-6 border-2 border-sage-500 border-t-transparent rounded-full animate-spin"/>
         </div>
       )}
 
@@ -71,13 +63,9 @@ export default function SearchPage() {
                 {r.type === 'verse' ? '📖 Quran' : '📜 Hadith'}
               </span>
               <span className="text-sm font-semibold text-sage-800">{r.label}</span>
-              {r.grade && (
-                <span className="text-xs text-sage-400 ml-auto">{r.grade}</span>
-              )}
+              {r.grade && <span className="text-xs text-sage-400 ml-auto">{r.grade}</span>}
             </div>
-            {r.arabic_text && (
-              <p className="arabic-text text-sage-900 mb-3">{r.arabic_text}</p>
-            )}
+            {r.arabic_text && <p className="arabic-text text-sage-900 mb-3">{r.arabic_text}</p>}
             <p className="text-sage-600 text-sm leading-relaxed">{r.translation}</p>
           </div>
         ))}
