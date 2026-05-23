@@ -1,25 +1,34 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { askQuestion, type AskResponse } from '@/lib/api';
 
 const SUGGESTED_QUESTIONS = [
-  'What does Islam say about patience (sabr)?',
-  'How many times should I pray each day?',
+  'What does Islam say about patience?',
+  'How should I treat my parents?',
   'What is the importance of Zakat?',
-  'What does the Quran say about kindness to parents?',
+  'What does the Quran say about forgiveness?',
 ];
 
 interface Props {
   onAnswer: (a: AskResponse) => void;
   onLoading: (l: boolean) => void;
   onError: (e: string | null) => void;
+  compact?: boolean;
 }
 
-export function QuestionForm({ onAnswer, onLoading, onError }: Props) {
+export function QuestionForm({ onAnswer, onLoading, onError, compact }: Props) {
   const [question, setQuestion] = useState('');
   const [language, setLanguage] = useState('en');
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  // Auto-resize textarea
+  useEffect(() => {
+    const el = textareaRef.current;
+    if (!el) return;
+    el.style.height = 'auto';
+    el.style.height = Math.min(el.scrollHeight, 200) + 'px';
+  }, [question]);
 
   const submit = async (q: string) => {
     if (!q.trim()) return;
@@ -44,67 +53,82 @@ export function QuestionForm({ onAnswer, onLoading, onError }: Props) {
   };
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-stone-200 p-6">
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <label className="block text-sm font-medium text-stone-600 mb-1">
-          Ask an Islamic question
-        </label>
+    <div className="space-y-3">
+      {/* Main input card */}
+      <div className="card p-1 focus-within:ring-2 focus-within:ring-sage-400 focus-within:ring-offset-1 transition-shadow">
+        <form onSubmit={handleSubmit}>
+          <textarea
+            ref={textareaRef}
+            value={question}
+            onChange={e => setQuestion(e.target.value)}
+            placeholder="Ask an Islamic question…"
+            rows={compact ? 2 : 3}
+            maxLength={2000}
+            className="w-full px-4 pt-4 pb-2 text-sage-900 placeholder-sage-300 text-sm
+                       leading-relaxed bg-transparent resize-none focus:outline-none"
+            onKeyDown={e => {
+              if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) handleSubmit(e as never);
+            }}
+          />
 
-        <textarea
-          ref={textareaRef}
-          value={question}
-          onChange={e => setQuestion(e.target.value)}
-          placeholder="e.g. What does the Quran say about forgiving others?"
-          rows={3}
-          maxLength={2000}
-          className="w-full border border-stone-300 rounded-xl px-4 py-3 text-stone-800
-                     placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-green-600
-                     focus:border-transparent resize-none"
-          onKeyDown={e => {
-            if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) handleSubmit(e as never);
-          }}
-        />
+          {/* Toolbar row */}
+          <div className="flex items-center justify-between px-3 pb-3 pt-1 gap-2">
+            <select
+              value={language}
+              onChange={e => setLanguage(e.target.value)}
+              className="text-xs text-sage-600 bg-sage-50 border border-sage-200 rounded-lg
+                         px-2.5 py-1.5 focus:outline-none focus:ring-2 focus:ring-sage-400 cursor-pointer"
+            >
+              <option value="en">🌐 English</option>
+              <option value="ar">🇸🇦 العربية</option>
+              <option value="ur">🇵🇰 اردو</option>
+              <option value="fr">🇫🇷 Français</option>
+              <option value="tr">🇹🇷 Türkçe</option>
+            </select>
 
-        <div className="flex items-center justify-between gap-4">
-          <select
-            value={language}
-            onChange={e => setLanguage(e.target.value)}
-            className="border border-stone-300 rounded-lg px-3 py-2 text-sm text-stone-700
-                       focus:outline-none focus:ring-2 focus:ring-green-600"
-          >
-            <option value="en">English</option>
-            <option value="ar">العربية</option>
-            <option value="ur">اردو</option>
-            <option value="fr">Français</option>
-            <option value="tr">Türkçe</option>
-          </select>
+            <div className="flex items-center gap-2">
+              {question && (
+                <span className="text-[10px] text-sage-300 tabular-nums">
+                  {question.length}/2000
+                </span>
+              )}
+              <button
+                type="submit"
+                disabled={!question.trim()}
+                aria-label="Submit question"
+                className="w-8 h-8 rounded-lg bg-sage-600 hover:bg-sage-700 disabled:bg-sage-200
+                           text-white flex items-center justify-center transition-colors
+                           focus:outline-none focus-visible:ring-2 focus-visible:ring-sage-400"
+              >
+                <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
+                  <path d="M1.5 1.5l13 6.5-13 6.5V9.5l9-3-9-3V1.5z" />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
 
-          <button
-            type="submit"
-            disabled={!question.trim()}
-            className="btn-primary disabled:opacity-50 disabled:cursor-not-allowed flex-1"
-          >
-            Ask NoorAI
-          </button>
-        </div>
-      </form>
+      <p className="text-[10px] text-sage-400 text-center">
+        ⌘↵ to send &nbsp;·&nbsp; Answers cited from Quran &amp; authentic Hadith only
+      </p>
 
-      {/* Suggested questions */}
-      <div className="mt-5 pt-4 border-t border-stone-100">
-        <p className="text-xs text-stone-400 mb-2">Suggested questions</p>
-        <div className="flex flex-wrap gap-2">
+      {/* Suggested questions — only when not compact */}
+      {!compact && (
+        <div className="flex flex-wrap gap-2 justify-center pt-1">
           {SUGGESTED_QUESTIONS.map(q => (
             <button
               key={q}
               onClick={() => { setQuestion(q); submit(q); }}
-              className="text-xs bg-green-50 text-green-700 hover:bg-green-100 border
-                         border-green-200 rounded-full px-3 py-1 transition-colors"
+              className="text-xs bg-white border border-sage-200 text-sage-600
+                         hover:bg-sage-50 hover:border-sage-300 hover:text-sage-800
+                         rounded-full px-3.5 py-1.5 transition-all duration-150 shadow-soft"
             >
               {q}
             </button>
           ))}
         </div>
-      </div>
+      )}
     </div>
   );
 }

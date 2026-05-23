@@ -1,58 +1,113 @@
+import { Logo } from '@/components/ui/Logo';
+
+const COLLECTIONS = [
+  'Sahih al-Bukhari',
+  'Sahih Muslim',
+  'Sunan Abu Dawud',
+  'Jami al-Tirmidhi',
+  'Sunan al-Nasai',
+  'Sunan Ibn Majah',
+  'Muwatta Imam Malik',
+  'Musnad Ahmad ibn Hanbal',
+];
+
 export default function AboutPage() {
   return (
-    <div className="max-w-2xl mx-auto space-y-8">
-      <h1 className="text-3xl font-bold text-green-900">About NoorAI</h1>
+    <div className="max-w-2xl mx-auto px-4 pb-20 pt-10 space-y-6">
 
-      <section className="bg-white rounded-2xl p-6 shadow-sm border border-stone-200 space-y-4">
-        <h2 className="text-xl font-semibold text-green-800">Our Sources</h2>
-        <p className="text-stone-600 leading-relaxed">
+      {/* Hero */}
+      <div className="text-center mb-8">
+        <div className="flex justify-center mb-4">
+          <div className="p-3 rounded-2xl bg-sage-50 border border-sage-100 inline-flex">
+            <Logo size={40} />
+          </div>
+        </div>
+        <h1 className="text-2xl font-bold text-sage-900 mb-2">About NoorAI</h1>
+        <p className="text-sage-500 text-sm max-w-sm mx-auto leading-relaxed">
+          An AI-powered Islamic Q&amp;A tool built on verifiable, authentic sources.
+        </p>
+      </div>
+
+      {/* Sources card */}
+      <div className="card p-6 space-y-5">
+        <h2 className="text-base font-semibold text-sage-800 flex items-center gap-2">
+          <span className="w-6 h-6 rounded-lg bg-sage-100 flex items-center justify-center text-sage-600">
+            <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M9 4.804A7.968 7.968 0 005.5 4c-1.255 0-2.443.29-3.5.804v10A7.969 7.969 0 015.5 14c1.669 0 3.218.51 4.5 1.385A7.962 7.962 0 0114.5 14c1.255 0 2.443.29 3.5.804v-10A7.968 7.968 0 0014.5 4c-1.255 0-2.443.29-3.5.804V12a1 1 0 11-2 0V4.804z" />
+            </svg>
+          </span>
+          Our Sources
+        </h2>
+        <p className="text-sm text-sage-600 leading-relaxed">
           NoorAI answers questions exclusively from two primary sources:
-          the <strong>Holy Quran</strong> and <strong>authentic (sahih/hasan) Hadith</strong>.
-          We never reference weak (daif) or fabricated (mawdu) narrations in AI responses.
+          the <strong className="text-sage-800">Holy Quran</strong> and{' '}
+          <strong className="text-sage-800">authentic (sahih/hasan) Hadith</strong>.
+          Weak (daif) or fabricated (mawdu) narrations are never used in AI responses.
         </p>
 
-        <h3 className="font-semibold text-stone-700 mt-4">Hadith Collections Used</h3>
-        <ul className="list-disc list-inside space-y-1 text-stone-600 text-sm">
-          <li>Sahih al-Bukhari</li>
-          <li>Sahih Muslim</li>
-          <li>Sunan Abu Dawud</li>
-          <li>Jami al-Tirmidhi</li>
-          <li>Sunan al-Nasai</li>
-          <li>Sunan Ibn Majah</li>
-          <li>Muwatta Imam Malik</li>
-          <li>Musnad Ahmad ibn Hanbal</li>
-        </ul>
+        <div>
+          <h3 className="text-xs font-semibold text-sage-400 uppercase tracking-widest mb-3">
+            Hadith Collections
+          </h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            {COLLECTIONS.map(c => (
+              <div key={c} className="flex items-center gap-2 text-sm text-sage-700">
+                <div className="w-1.5 h-1.5 rounded-full bg-sage-400 shrink-0" />
+                {c}
+              </div>
+            ))}
+          </div>
+        </div>
 
-        <h3 className="font-semibold text-stone-700 mt-4">Grading Methodology</h3>
-        <p className="text-stone-600 text-sm leading-relaxed">
-          Only hadith classified as <strong>Sahih (authentic)</strong> or{' '}
-          <strong>Hasan (good)</strong> by classical Hadith scholars are used in answer
-          generation. All citations are verified against our database — the AI cannot
-          fabricate a reference.
-        </p>
-      </section>
+        <div className="bg-sage-50 rounded-xl p-4 border border-sage-100">
+          <h3 className="text-xs font-semibold text-sage-600 uppercase tracking-widest mb-2">
+            Grading Methodology
+          </h3>
+          <p className="text-sm text-sage-600 leading-relaxed">
+            Only hadith classified as <strong className="text-sage-800">Sahih (authentic)</strong> or{' '}
+            <strong className="text-sage-800">Hasan (good)</strong> by classical scholars are used.
+            All citations are verified against our database — the AI cannot fabricate a reference.
+          </p>
+        </div>
+      </div>
 
-      <section className="bg-amber-50 border border-amber-200 rounded-2xl p-6 space-y-3">
-        <h2 className="text-lg font-semibold text-amber-800">Important Disclaimer</h2>
-        <p className="text-amber-700 text-sm leading-relaxed">
+      {/* Disclaimer card */}
+      <div className="rounded-2xl p-5 bg-amber-50 border border-amber-200 space-y-2">
+        <h2 className="text-sm font-semibold text-amber-800 flex items-center gap-2">
+          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+            <path fillRule="evenodd" clipRule="evenodd"
+              d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" />
+          </svg>
+          Important Disclaimer
+        </h2>
+        <p className="text-sm text-amber-700 leading-relaxed">
           NoorAI is an educational tool only. Responses are generated by AI and are{' '}
           <strong>not fatwas</strong> or authoritative religious rulings. Always consult
           a qualified Islamic scholar for personal religious decisions.
         </p>
-        <p className="text-amber-700 text-sm">
+        <p className="text-sm text-amber-700">
           Every answer carries an AI disclaimer and a flagging option so the community
           and our scholar advisors can review and correct any errors.
         </p>
-      </section>
+      </div>
 
-      <section className="bg-white rounded-2xl p-6 shadow-sm border border-stone-200">
-        <h2 className="text-lg font-semibold text-green-800 mb-3">Scholar Advisory</h2>
-        <p className="text-stone-600 text-sm leading-relaxed">
+      {/* Scholar advisory */}
+      <div className="card p-6">
+        <h2 className="text-base font-semibold text-sage-800 mb-3 flex items-center gap-2">
+          <span className="w-6 h-6 rounded-lg bg-sage-100 flex items-center justify-center text-sage-600">
+            <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" clipRule="evenodd"
+                d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" />
+            </svg>
+          </span>
+          Scholar Advisory
+        </h2>
+        <p className="text-sm text-sage-600 leading-relaxed">
           NoorAI maintains a panel of qualified Islamic scholars who review flagged answers,
           approve verified responses, and audit a random sample of AI answers quarterly.
           Scholar-verified answers are marked with a badge.
         </p>
-      </section>
+      </div>
     </div>
   );
 }

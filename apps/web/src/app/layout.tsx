@@ -4,7 +4,7 @@ import './globals.css';
 import { I18nProvider } from '@/components/layout/I18nProvider';
 import { Navbar } from '@/components/layout/Navbar';
 
-const inter = Inter({ subsets: ['latin'] });
+const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 
 export const metadata: Metadata = {
   title: 'NoorAI — Islamic Q&A',
@@ -23,26 +23,28 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: '#1A5C38',
+  themeColor: '#40915f',
   width: 'device-width',
   initialScale: 1,
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body className={inter.className}>
+    <html lang="en" suppressHydrationWarning className={inter.variable}>
+      <body className="font-sans antialiased bg-cream-50 text-sage-950">
         <I18nProvider>
-          <div className="min-h-screen bg-stone-50">
+          <div className="min-h-screen flex flex-col">
             <Navbar />
-            <main className="max-w-4xl mx-auto px-4 py-6">{children}</main>
-            <footer className="text-center py-6 text-sm text-stone-400 border-t border-stone-200 mt-12">
-              <p>
-                NoorAI — for educational purposes only. Not a fatwa.{' '}
-                <a href="/about" className="text-green-700 hover:underline">
-                  About our sources
-                </a>
-              </p>
+            <main className="flex-1">{children}</main>
+            <footer className="border-t border-sage-100 bg-white/60 py-5 mt-16">
+              <div className="max-w-5xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-sage-400">
+                <p>NoorAI — for educational purposes only. Not a fatwa.</p>
+                <div className="flex items-center gap-4">
+                  <a href="/about" className="hover:text-sage-600 transition-colors">About our sources</a>
+                  <span>·</span>
+                  <a href="/search" className="hover:text-sage-600 transition-colors">Search</a>
+                </div>
+              </div>
             </footer>
           </div>
         </I18nProvider>
