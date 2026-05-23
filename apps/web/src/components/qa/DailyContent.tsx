@@ -5,53 +5,97 @@ import { getDaily, type DailyContent as DailyContentType } from '@/lib/api';
 
 export function DailyContent() {
   const [daily, setDaily] = useState<DailyContentType | null>(null);
-  const [activeTab, setActiveTab] = useState<'verse' | 'hadith'>('verse');
+  const [tab, setTab] = useState<'verse' | 'hadith'>('verse');
 
   useEffect(() => { getDaily().then(setDaily).catch(() => {}); }, []);
 
   if (!daily) return null;
 
-  const item = activeTab === 'verse' ? daily.verse : daily.hadith;
+  const item = tab === 'verse' ? daily.verse : daily.hadith;
 
   return (
-    <div className="border border-[#e8e8e5] rounded-xl bg-white overflow-hidden">
+    <div style={{
+      background: 'var(--white)',
+      border: '1px solid var(--rule)',
+      borderRadius: 14,
+      overflow: 'hidden',
+    }}>
       {/* Header */}
-      <div className="flex items-center justify-between px-4 py-3 border-b border-[#f0f0ed]">
-        <div className="flex items-center gap-2">
-          <div className="w-1.5 h-1.5 rounded-full bg-[#40915f]"/>
-          <span className="text-[12.5px] font-semibold text-[#555]">Today&apos;s Reminder</span>
+      <div style={{
+        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+        padding: '12px 16px',
+        borderBottom: '1px solid var(--rule)',
+        background: 'rgba(245,237,218,0.5)',
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          {/* Tiny star ornament */}
+          <svg width="10" height="10" viewBox="0 0 10 10">
+            <polygon points="5,0.5 6.1,3.7 9.5,3.7 6.9,5.8 7.9,9 5,7 2.1,9 3.1,5.8 0.5,3.7 3.9,3.7"
+              fill="var(--gold)" opacity="0.75"/>
+          </svg>
+          <span style={{ fontSize: 11.5, fontFamily: 'Lora, serif', fontWeight: 600, color: 'var(--ink-soft)', letterSpacing: '0.03em' }}>
+            Today&apos;s Reminder
+          </span>
         </div>
-        <div className="flex gap-1">
-          {(['verse', 'hadith'] as const).map(tab => (
-            <button key={tab} onClick={() => setActiveTab(tab)}
-              className={`text-[12px] px-3 py-1 rounded-full font-medium transition-colors ${
-                activeTab === tab
-                  ? 'bg-[#40915f] text-white'
-                  : 'text-[#888] hover:bg-[#f5f5f4]'
-              }`}>
-              {tab === 'verse' ? 'Quran' : 'Hadith'}
+
+        {/* Tabs */}
+        <div style={{ display: 'flex', gap: 4 }}>
+          {(['verse', 'hadith'] as const).map(t => (
+            <button key={t} onClick={() => setTab(t)} style={{
+              fontSize: 11.5, fontFamily: 'Lora, serif',
+              padding: '4px 12px', borderRadius: 99,
+              border: 'none', cursor: 'pointer',
+              fontWeight: tab === t ? 500 : 400,
+              background: tab === t ? 'var(--forest)' : 'transparent',
+              color: tab === t ? 'var(--gold-light)' : 'var(--ink-muted)',
+              transition: 'all 0.15s',
+            }}>
+              {t === 'verse' ? 'Quran' : 'Hadith'}
             </button>
           ))}
         </div>
       </div>
 
       {/* Content */}
-      <div className="px-4 py-4">
+      <div style={{ padding: '18px 18px 18px' }}>
         {item ? (
-          <div className="space-y-3">
-            <p className="arabic-text text-[#1a1a1a]">{item.arabic_text}</p>
-            <p className="text-[13.5px] text-[#444] leading-relaxed">{item.translation}</p>
-            <div className="flex items-center justify-between">
-              <p className="text-[12px] font-medium text-[#40915f]">{item.reference}</p>
+          <div className="animate-fade-in" style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+            {/* Large decorative opening quote */}
+            <div style={{
+              fontFamily: "'Cormorant Garamond', serif", fontSize: '3rem',
+              color: 'var(--gold)', lineHeight: 0.6, opacity: 0.4,
+              userSelect: 'none', marginBottom: -4,
+            }}>&ldquo;</div>
+
+            <p style={{
+              fontFamily: 'Amiri, serif', fontSize: '1.25rem',
+              direction: 'rtl', textAlign: 'right',
+              color: 'var(--ink)', lineHeight: 2.6, margin: 0,
+            }}>{item.arabic_text}</p>
+
+            <p style={{
+              fontSize: 13.5, fontFamily: 'Lora, serif',
+              color: 'var(--ink-soft)', lineHeight: 1.8,
+              fontStyle: 'italic', margin: 0,
+            }}>{item.translation}</p>
+
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: 8, borderTop: '1px solid var(--rule)' }}>
+              <p style={{ fontSize: 12, fontFamily: 'Lora, serif', fontWeight: 600, color: 'var(--gold)', margin: 0 }}>
+                {item.reference}
+              </p>
               {'grade' in item && item.grade && (
-                <span className="text-[11px] text-[#888] bg-[#f5f5f4] px-2 py-0.5 rounded-full">
-                  {String(item.grade)}
-                </span>
+                <span style={{
+                  fontSize: 11, fontFamily: 'Lora, serif',
+                  color: 'var(--ink-muted)', background: 'var(--parchment-2)',
+                  border: '1px solid var(--rule)', padding: '2px 10px', borderRadius: 99,
+                }}>{String(item.grade)}</span>
               )}
             </div>
           </div>
         ) : (
-          <p className="text-[13px] text-[#aaa] py-2">No content scheduled for today.</p>
+          <p style={{ fontSize: 13, fontFamily: 'Lora, serif', color: 'var(--ink-faint)', padding: '8px 0' }}>
+            No content scheduled for today.
+          </p>
         )}
       </div>
     </div>

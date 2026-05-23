@@ -5,29 +5,74 @@ import { flagAnswer, saveAnswer, type AskResponse, type Citation } from '@/lib/a
 
 function CitationBlock({ citation, index }: { citation: Citation; index: number }) {
   const [open, setOpen] = useState(false);
+
   return (
-    <div className="border border-[#e8e8e5] rounded-xl overflow-hidden">
-      <button onClick={() => setOpen(v => !v)}
-        className="w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-[#fafaf8] transition-colors">
-        <span className="w-5 h-5 rounded-full bg-[#e8f5ee] text-[#40915f] text-[10px] font-bold
-                         flex items-center justify-center shrink-0">
-          {index + 1}
-        </span>
-        <span className="text-[13.5px] font-medium text-[#333] flex-1 leading-snug">{citation.label}</span>
-        <svg className={`w-3.5 h-3.5 text-[#bbb] shrink-0 transition-transform ${open ? 'rotate-180' : ''}`}
-          fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 12 12">
-          <path d="M2 4l4 4 4-4" strokeLinecap="round"/>
+    <div style={{
+      border: '1px solid var(--rule)',
+      borderRadius: 10,
+      overflow: 'hidden',
+      background: 'var(--white)',
+      transition: 'border-color 0.15s',
+    }}>
+      <button onClick={() => setOpen(v => !v)} style={{
+        width: '100%', display: 'flex', alignItems: 'center', gap: 12,
+        padding: '11px 14px', textAlign: 'left',
+        background: 'transparent', border: 'none', cursor: 'pointer',
+        transition: 'background 0.12s',
+      }}
+        onMouseEnter={e => (e.currentTarget.style.background = 'rgba(245,237,218,0.6)')}
+        onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
+      >
+        {/* Number badge */}
+        <span style={{
+          width: 22, height: 22, borderRadius: '50%',
+          background: 'var(--forest)', color: 'var(--gold-light)',
+          fontSize: 10, fontWeight: 700,
+          fontFamily: "'Cormorant Garamond', serif",
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          flexShrink: 0,
+        }}>{index + 1}</span>
+
+        <span style={{
+          flex: 1, fontSize: 13.5, fontFamily: 'Lora, serif',
+          fontWeight: 500, color: 'var(--ink)', lineHeight: 1.35,
+        }}>{citation.label}</span>
+
+        <svg style={{ flexShrink: 0, transform: open ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }}
+          width="13" height="13" viewBox="0 0 12 12" fill="none"
+          stroke="var(--ink-faint)" strokeWidth="1.5" strokeLinecap="round">
+          <path d="M2 4l4 4 4-4"/>
         </svg>
       </button>
+
       {open && (
-        <div className="px-4 pb-4 pt-1 border-t border-[#f0f0ed] space-y-2.5 bg-[#fafaf8]">
+        <div style={{
+          padding: '0 14px 14px',
+          borderTop: '1px solid var(--rule)',
+          background: 'rgba(245,237,218,0.4)',
+        }} className="animate-fade-in">
           {citation.arabic_text && (
-            <p className="arabic-text text-[#1a1a1a] text-lg">{citation.arabic_text}</p>
+            <p style={{
+              fontFamily: 'Amiri, serif', fontSize: '1.2rem',
+              direction: 'rtl', textAlign: 'right',
+              color: 'var(--ink)', lineHeight: 2.5,
+              marginBottom: 8, paddingTop: 10,
+              borderBottom: '1px solid var(--rule)', paddingBottom: 10,
+            }}>{citation.arabic_text}</p>
           )}
-          <p className="text-[13px] text-[#555] leading-relaxed">{citation.translation}</p>
+          <p style={{
+            fontSize: 13.5, fontFamily: 'Lora, serif',
+            color: 'var(--ink-soft)', lineHeight: 1.75,
+            margin: '10px 0 0', fontStyle: 'italic',
+          }}>{citation.translation}</p>
           {citation.grade && (
-            <span className="inline-block text-[11px] text-[#888] bg-white border border-[#e8e8e5]
-                             px-2.5 py-0.5 rounded-full">
+            <span style={{
+              display: 'inline-block', marginTop: 10,
+              fontSize: 11, fontFamily: 'Lora, serif',
+              color: 'var(--gold)', background: 'var(--gold-pale)',
+              border: '1px solid rgba(184,134,42,0.25)',
+              padding: '2px 10px', borderRadius: 99,
+            }}>
               Grade: {citation.grade}
             </span>
           )}
@@ -37,12 +82,6 @@ function CitationBlock({ citation, index }: { citation: Citation; index: number 
   );
 }
 
-const CONFIDENCE_BADGE: Record<string, string> = {
-  high:   'text-[#40915f] bg-[#e8f5ee]',
-  medium: 'text-amber-700 bg-amber-50',
-  low:    'text-red-600 bg-red-50',
-};
-
 export function AnswerCard({ answer }: { answer: AskResponse }) {
   const [flagging, setFlagging] = useState(false);
   const [flagReason, setFlagReason] = useState('');
@@ -50,7 +89,12 @@ export function AnswerCard({ answer }: { answer: AskResponse }) {
   const [saved, setSaved] = useState(false);
   const [copied, setCopied] = useState(false);
 
-  const badgeCls = CONFIDENCE_BADGE[answer.confidence] ?? CONFIDENCE_BADGE.medium;
+  const CONF_STYLE: Record<string, { color: string; bg: string }> = {
+    high:   { color: 'var(--forest)', bg: 'var(--forest-pale)' },
+    medium: { color: '#7a5c00',       bg: '#fdf4d4' },
+    low:    { color: '#8b2c1c',       bg: '#fdf0ed' },
+  };
+  const conf = CONF_STYLE[answer.confidence] ?? CONF_STYLE.medium;
 
   const handleSave = async () => {
     try { await saveAnswer(answer.answer_id); setSaved(true); } catch { /* ignore */ }
@@ -66,94 +110,113 @@ export function AnswerCard({ answer }: { answer: AskResponse }) {
   };
 
   return (
-    <div className="space-y-5">
-      {/* Confidence + cache */}
-      <div className="flex items-center gap-2.5">
-        <span className={`text-[11.5px] font-medium px-2.5 py-0.5 rounded-full ${badgeCls}`}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+
+      {/* Confidence pill */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+        <span style={{
+          fontSize: 11.5, fontFamily: 'Lora, serif', fontWeight: 500,
+          color: conf.color, background: conf.bg,
+          padding: '3px 12px', borderRadius: 99,
+        }}>
           {answer.confidence} confidence
         </span>
         {answer.from_cache && (
-          <span className="text-[11.5px] text-[#aaa]">· Cached</span>
+          <span style={{ fontSize: 11.5, fontFamily: 'Lora, serif', color: 'var(--ink-faint)' }}>· Cached</span>
         )}
       </div>
 
       {/* Answer text */}
-      <p className="text-[14.5px] text-[#1a1a1a] leading-[1.75] whitespace-pre-wrap">
-        {answer.answer_text}
-      </p>
+      <p style={{
+        fontSize: 15, fontFamily: 'Lora, Georgia, serif',
+        color: 'var(--ink)', lineHeight: 1.85,
+        whiteSpace: 'pre-wrap', margin: 0,
+      }}>{answer.answer_text}</p>
 
       {/* Citations */}
       {answer.citations.length > 0 && (
-        <div className="space-y-2">
-          <p className="text-[11px] font-semibold text-[#aaa] uppercase tracking-widest">
-            Sources · {answer.citations.length}
-          </p>
-          {answer.citations.map((c, i) => (
-            <CitationBlock key={i} citation={c} index={i}/>
-          ))}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+          <p style={{
+            fontSize: 10, fontFamily: 'Lora, serif', fontWeight: 600,
+            color: 'var(--ink-faint)', letterSpacing: '0.1em',
+            textTransform: 'uppercase', margin: 0,
+          }}>Sources · {answer.citations.length}</p>
+          {answer.citations.map((c, i) => <CitationBlock key={i} citation={c} index={i}/>)}
         </div>
       )}
 
-      {/* Action bar */}
-      <div className="flex items-center gap-1 pt-2 border-t border-[#f0f0ed]">
-        <button onClick={handleSave} disabled={saved}
-          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[12.5px] font-medium transition-colors
-            ${saved ? 'text-[#40915f] cursor-default' : 'text-[#888] hover:bg-[#f5f5f4] hover:text-[#333]'}`}>
-          <svg className="w-3.5 h-3.5" fill={saved ? 'currentColor' : 'none'}
-            stroke="currentColor" strokeWidth="1.8" viewBox="0 0 20 20">
-            <path strokeLinecap="round" strokeLinejoin="round"
-              d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
-          </svg>
-          {saved ? 'Saved' : 'Save'}
-        </button>
+      {/* Actions */}
+      <div style={{
+        display: 'flex', alignItems: 'center', gap: 2,
+        paddingTop: 12,
+        borderTop: '1px solid var(--rule)',
+      }}>
+        {[
+          { label: saved ? 'Saved' : 'Save', onClick: handleSave, disabled: saved },
+          { label: copied ? 'Copied!' : 'Copy', onClick: handleCopy },
+        ].map(({ label, onClick, disabled }) => (
+          <button key={label} onClick={onClick} disabled={disabled} style={{
+            display: 'flex', alignItems: 'center', gap: 5,
+            padding: '5px 10px', borderRadius: 7,
+            fontSize: 12.5, fontFamily: 'Lora, serif',
+            color: disabled ? 'var(--forest)' : 'var(--ink-muted)',
+            background: 'transparent', border: 'none', cursor: disabled ? 'default' : 'pointer',
+            transition: 'all 0.12s',
+          }}
+            onMouseEnter={e => { if (!disabled) (e.currentTarget as HTMLElement).style.background = 'rgba(180,165,135,0.2)'; }}
+            onMouseLeave={e => { if (!disabled) (e.currentTarget as HTMLElement).style.background = 'transparent'; }}
+          >{label}</button>
+        ))}
 
-        <button onClick={handleCopy}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[12.5px] font-medium
-                     text-[#888] hover:bg-[#f5f5f4] hover:text-[#333] transition-colors">
-          <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 20 20">
-            <path strokeLinecap="round" strokeLinejoin="round"
-              d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
-          </svg>
-          {copied ? 'Copied!' : 'Copy'}
-        </button>
-
-        <button onClick={() => setFlagging(v => !v)}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[12.5px] font-medium
-                     text-[#bbb] hover:bg-red-50 hover:text-red-500 transition-colors ml-auto">
-          <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 20 20">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M3 21V4l18 6-18 6v5z"/>
-          </svg>
-          Flag
-        </button>
+        <button onClick={() => setFlagging(v => !v)} style={{
+          marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 5,
+          padding: '5px 10px', borderRadius: 7,
+          fontSize: 12.5, fontFamily: 'Lora, serif',
+          color: 'var(--ink-faint)', background: 'transparent', border: 'none', cursor: 'pointer',
+          transition: 'all 0.12s',
+        }}
+          onMouseEnter={e => { (e.currentTarget.style.background = '#fdf2ee'); (e.currentTarget.style.color = '#9b3a2a'); }}
+          onMouseLeave={e => { (e.currentTarget.style.background = 'transparent'); (e.currentTarget.style.color = 'var(--ink-faint)'); }}
+        >Flag</button>
       </div>
 
       {flagging && !flagSent && (
-        <div className="border border-red-100 rounded-xl p-4 space-y-3 bg-red-50">
-          <p className="text-[12px] font-semibold text-red-700 uppercase tracking-wide">Report an issue</p>
+        <div style={{
+          borderRadius: 10, border: '1px solid #f5c6b8',
+          background: '#fdf2ee', padding: '14px 16px',
+          display: 'flex', flexDirection: 'column', gap: 10,
+        }} className="animate-fade-in">
+          <p style={{ fontSize: 11.5, fontFamily: 'Lora, serif', fontWeight: 600, color: '#8b2c1c', margin: 0, letterSpacing: '0.06em', textTransform: 'uppercase' }}>Report an issue</p>
           <textarea value={flagReason} onChange={e => setFlagReason(e.target.value)}
             placeholder="Describe the issue…" rows={3}
-            className="w-full border border-red-200 rounded-lg px-3 py-2 text-[13px] resize-none bg-white
-                       text-red-900 placeholder-red-300 focus:outline-none focus:ring-1 focus:ring-red-300"/>
-          <div className="flex gap-2">
-            <button onClick={handleFlag} disabled={!flagReason.trim()}
-              className="text-[13px] bg-red-500 hover:bg-red-600 text-white px-4 py-1.5 rounded-lg disabled:opacity-50 transition-colors">
-              Submit
-            </button>
-            <button onClick={() => setFlagging(false)}
-              className="text-[13px] text-[#888] hover:text-[#333] px-4 py-1.5 transition-colors">
-              Cancel
-            </button>
+            style={{
+              width: '100%', border: '1px solid #f5c6b8', borderRadius: 8,
+              padding: '10px 12px', fontSize: 13, fontFamily: 'Lora, serif',
+              background: 'white', color: '#5c1a0e', resize: 'none',
+              outline: 'none', boxSizing: 'border-box',
+            }}/>
+          <div style={{ display: 'flex', gap: 8 }}>
+            <button onClick={handleFlag} disabled={!flagReason.trim()} style={{
+              fontSize: 12.5, fontFamily: 'Lora, serif',
+              background: '#9b3a2a', color: 'white',
+              border: 'none', borderRadius: 7, padding: '6px 16px', cursor: 'pointer',
+              opacity: flagReason.trim() ? 1 : 0.4,
+            }}>Submit</button>
+            <button onClick={() => setFlagging(false)} style={{
+              fontSize: 12.5, fontFamily: 'Lora, serif',
+              background: 'transparent', color: 'var(--ink-muted)',
+              border: 'none', cursor: 'pointer', padding: '6px 12px',
+            }}>Cancel</button>
           </div>
         </div>
       )}
 
       {flagSent && (
-        <div className="flex items-center gap-2 text-[13px] text-[#40915f] bg-[#e8f5ee]
-                        border border-[#c3e2cd] rounded-xl px-4 py-3">
-          <svg className="w-4 h-4 shrink-0" fill="currentColor" viewBox="0 0 20 20">
-            <path fillRule="evenodd" clipRule="evenodd"
-              d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/>
-          </svg>
+        <div style={{
+          fontSize: 13, fontFamily: 'Lora, serif', color: 'var(--forest)',
+          background: 'var(--forest-pale)', border: '1px solid rgba(61,122,94,0.25)',
+          borderRadius: 10, padding: '12px 16px',
+        }} className="animate-fade-in">
           Flagged for scholar review — thank you.
         </div>
       )}
