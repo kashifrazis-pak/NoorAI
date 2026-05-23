@@ -7,21 +7,30 @@ def _load_mod(name, filename):
     s = importlib.util.spec_from_file_location(name, _p.Path(__file__).parent / filename)
     m = importlib.util.module_from_spec(s); _sys.modules[name] = m; s.loader.exec_module(m); return m
 _rm = _sys.modules.get("retriever") or _load_mod("retriever", "retriever.py")
-RetrievedChunk = _rm.RetrievedChunk; VerseChunk = _rm.VerseChunk; HadithChunk = _rm.HadithChunk
+RetrievedChunk = _rm.RetrievedChunk
+VerseChunk   = _rm.VerseChunk
+HadithChunk  = _rm.HadithChunk
+TafsirChunk  = _rm.TafsirChunk
+DuaChunk     = _rm.DuaChunk
+SeerahChunk  = _rm.SeerahChunk
 
 SYSTEM_PROMPT = """\
 You are NoorAI, an Islamic knowledge assistant. Your role is to help Muslims \
-understand their faith based exclusively on the Quran and authentic Hadith.
+understand their faith based on the Quran, authentic Hadith, classical Tafsir, \
+prophetic duas (supplications), and the Seerah (biography of the Prophet ﷺ).
 
 STRICT RULES — you must follow every one of these at all times:
 1. Answer ONLY from the Quran verses and Hadith passages provided in the \
 <context> block below. Do NOT use any knowledge from your training data that \
 is not reflected in the provided context.
-2. Every answer MUST cite the exact source:
-   - Quran: [Surah Name, Chapter:Verse]  e.g. [Al-Baqarah, 2:286]
+2. Every answer MUST cite the exact source using these formats:
+   - Quran verse: [Surah Name, Chapter:Verse]  e.g. [Al-Baqarah, 2:286]
    - Hadith: [Collection, Book X, Hadith Y, Grade]  e.g. [Sahih al-Bukhari, Book 2, Hadith 47, Sahih]
-3. Always include the original Arabic text of any cited verse or hadith, \
-followed by its translation in the user's language.
+   - Tafsir: [Tafsir Ibn Kathir, Surah X:Y]  e.g. [Tafsir Ibn Kathir, Surah 2:255]
+   - Dua: [Hisnul Muslim, Category]  e.g. [Hisnul Muslim, Morning]
+   - Seerah: [Ar-Raheeq Al-Makhtum, Chapter N]  e.g. [Ar-Raheeq Al-Makhtum, Chapter 6]
+3. For Quran verses and Hadith, always include the original Arabic text followed \
+by its translation. For Tafsir, Duas, and Seerah, include the text as provided.
 4. If the provided context does not contain enough information to answer \
 confidently, respond EXACTLY with:
    "I was unable to find a direct answer in the available Quran and authentic \
@@ -88,6 +97,28 @@ def format_context_block(chunks: list[RetrievedChunk], user_language: str = "en"
             )
             if chunk.narrator_chain:
                 lines.append(f"Narrator chain: {chunk.narrator_chain}")
+
+        elif isinstance(chunk, TafsirChunk):
+            lines.append(
+                f"\n[Source {i}] Tafsir — {chunk.citation_label()}\n"
+                f"Scholar: {chunk.scholar_name}\n"
+                f"{chunk.text}"
+            )
+
+        elif isinstance(chunk, DuaChunk):
+            translation = chunk.translations.get(user_language) or chunk.translations.get("en", "")
+            lines.append(
+                f"\n[Source {i}] Dua — {chunk.citation_label()}\n"
+                f"Arabic: {chunk.arabic_text}\n"
+                + (f"Transliteration: {chunk.transliteration}\n" if chunk.transliteration else "")
+                + f"Translation: {translation}"
+            )
+
+        elif isinstance(chunk, SeerahChunk):
+            lines.append(
+                f"\n[Source {i}] Seerah — {chunk.citation_label()}\n"
+                f"{chunk.content}"
+            )
 
     lines.append("\n</context>")
     return "\n".join(lines)

@@ -1,9 +1,8 @@
 from typing import Optional, List
 
 import hashlib
-import json
 import logging
-from dataclasses import dataclass, asdict
+from dataclasses import dataclass
 
 import anthropic
 import asyncpg
@@ -21,8 +20,11 @@ _pb = _load("prompt_builder", "prompt_builder.py")
 _cv = _load("citation_verifier", "citation_verifier.py")
 retrieve_context = _retriever.retrieve_context
 RetrievedChunk = _retriever.RetrievedChunk
-VerseChunk = _retriever.VerseChunk
-HadithChunk = _retriever.HadithChunk
+VerseChunk   = _retriever.VerseChunk
+HadithChunk  = _retriever.HadithChunk
+TafsirChunk  = _retriever.TafsirChunk
+DuaChunk     = _retriever.DuaChunk
+SeerahChunk  = _retriever.SeerahChunk
 SYSTEM_PROMPT = _pb.SYSTEM_PROMPT
 DISCLAIMER = _pb.DISCLAIMER
 build_messages = _pb.build_messages
@@ -63,33 +65,50 @@ def _make_cache_key(question: str, language: str) -> str:
 def _chunks_to_citations(chunks: List[RetrievedChunk], user_language: str) -> List[Citation]:
     citations: List[Citation] = []
     for chunk in chunks:
-        translation = ""
-        if chunk.translations:
-            translation = chunk.translations.get(user_language) or chunk.translations.get("en", "")
         if isinstance(chunk, VerseChunk):
-            citations.append(
-                Citation(
-                    type="verse",
-                    label=chunk.citation_label(),
-                    surah_number=chunk.surah_number,
-                    ayah_number=chunk.ayah_number,
-                    arabic_text=chunk.arabic_text,
-                    translation=translation,
-                )
-            )
+            translation = chunk.translations.get(user_language) or chunk.translations.get("en", "")
+            citations.append(Citation(
+                type="verse",
+                label=chunk.citation_label(),
+                surah_number=chunk.surah_number,
+                ayah_number=chunk.ayah_number,
+                arabic_text=chunk.arabic_text,
+                translation=translation,
+            ))
         elif isinstance(chunk, HadithChunk):
+            translation = chunk.translations.get(user_language) or chunk.translations.get("en", "")
             display_grade = chunk.grade if chunk.grade not in ("unknown", "") else "authentic"
-            citations.append(
-                Citation(
-                    type="hadith",
-                    label=chunk.citation_label(),
-                    collection_slug=chunk.collection_slug,
-                    hadith_number=chunk.hadith_number,
-                    grade=display_grade,
-                    arabic_text=chunk.arabic_text,
-                    translation=translation,
-                )
-            )
+            citations.append(Citation(
+                type="hadith",
+                label=chunk.citation_label(),
+                collection_slug=chunk.collection_slug,
+                hadith_number=chunk.hadith_number,
+                grade=display_grade,
+                arabic_text=chunk.arabic_text,
+                translation=translation,
+            ))
+        elif isinstance(chunk, TafsirChunk):
+            citations.append(Citation(
+                type="tafsir",
+                label=chunk.citation_label(),
+                arabic_text="",
+                translation=chunk.text,
+            ))
+        elif isinstance(chunk, DuaChunk):
+            translation = chunk.translations.get(user_language) or chunk.translations.get("en", "")
+            citations.append(Citation(
+                type="dua",
+                label=chunk.citation_label(),
+                arabic_text=chunk.arabic_text,
+                translation=translation,
+            ))
+        elif isinstance(chunk, SeerahChunk):
+            citations.append(Citation(
+                type="seerah",
+                label=chunk.citation_label(),
+                arabic_text="",
+                translation=chunk.content,
+            ))
     return citations
 
 

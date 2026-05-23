@@ -13,7 +13,7 @@ from slowapi.errors import RateLimitExceeded
 
 from .config import get_settings
 from .database import get_pool, close_pool
-from .routes import ask, answers, quran, hadith, search, users, scholar, daily
+from .routes import ask, answers, quran, hadith, search, users, scholar, daily, prayer_times
 
 settings = get_settings()
 limiter = Limiter(key_func=get_remote_address)
@@ -80,6 +80,7 @@ app.include_router(search.router, prefix=PREFIX, tags=["Search"])
 app.include_router(users.router, prefix=PREFIX, tags=["Users"])
 app.include_router(scholar.router, prefix=PREFIX, tags=["Scholar"])
 app.include_router(daily.router, prefix=PREFIX, tags=["Daily Content"])
+app.include_router(prayer_times.router, prefix=PREFIX, tags=["Prayer Times"])
 
 
 @app.get("/health")

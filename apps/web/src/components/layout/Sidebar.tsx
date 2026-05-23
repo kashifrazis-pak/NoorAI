@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
+import { PrayerTimes } from './PrayerTimes';
 
 const NAV = [
   {
@@ -223,6 +224,9 @@ export function Sidebar() {
             >{q}</button>
           ))}
         </div>
+
+        {/* Prayer Times widget */}
+        <PrayerTimes />
 
         {/* Tips card */}
         <div style={{
