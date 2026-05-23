@@ -72,7 +72,7 @@ async def get_daily(language: str = Query("en", pattern=r"^[a-z]{2}$")):
                        arabic_text, translations
                 FROM quran_verses
                 ORDER BY surah_number, ayah_number
-                OFFSET ($1 % $2)
+                OFFSET (($1::bigint) % ($2::bigint))
                 LIMIT 1
                 """,
                 day_num, count,
@@ -88,16 +88,16 @@ async def get_daily(language: str = Query("en", pattern=r"^[a-z]{2}$")):
 
     if not result["hadith"]:
         day_num = today.timetuple().tm_yday
-        count = await pool.fetchval("SELECT COUNT(*) FROM hadith WHERE grade IN ('sahih','hasan')")
+        count = await pool.fetchval("SELECT COUNT(*) FROM hadith WHERE grade IN ('sahih','hasan','unknown')")
         if count and count > 0:
             h = await pool.fetchrow(
                 """
                 SELECT id::text, collection_slug, hadith_number, grade,
                        arabic_text, translations
                 FROM hadith
-                WHERE grade IN ('sahih','hasan')
+                WHERE grade IN ('sahih','hasan','unknown')
                 ORDER BY collection_slug, hadith_number
-                OFFSET ($1 % $2)
+                OFFSET (($1::bigint) % ($2::bigint))
                 LIMIT 1
                 """,
                 day_num, count,

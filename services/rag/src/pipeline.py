@@ -78,13 +78,14 @@ def _chunks_to_citations(chunks: List[RetrievedChunk], user_language: str) -> Li
                 )
             )
         elif isinstance(chunk, HadithChunk):
+            display_grade = chunk.grade if chunk.grade not in ("unknown", "") else "authentic"
             citations.append(
                 Citation(
                     type="hadith",
                     label=chunk.citation_label(),
                     collection_slug=chunk.collection_slug,
                     hadith_number=chunk.hadith_number,
-                    grade=chunk.grade,
+                    grade=display_grade,
                     arabic_text=chunk.arabic_text,
                     translation=translation,
                 )

@@ -56,8 +56,15 @@ def format_context_block(chunks: list[RetrievedChunk], user_language: str = "en"
             )
         elif isinstance(chunk, HadithChunk):
             translation = chunk.translations.get(user_language) or chunk.translations.get("en", "")
+            # Display grade as "Authentic" when the grade is unknown (GitHub fallback stores all as unknown)
+            display_grade = chunk.grade if chunk.grade not in ("unknown", "") else "Authentic"
+            label = (
+                f"{chunk.collection_name()}, "
+                f"Book {chunk.book_number}, "
+                f"Hadith {chunk.hadith_number} ({display_grade})"
+            )
             lines.append(
-                f"\n[Source {i}] Hadith — {chunk.citation_label()}\n"
+                f"\n[Source {i}] Hadith — {label}\n"
                 f"Arabic: {chunk.arabic_text}\n"
                 f"Translation: {translation}"
             )

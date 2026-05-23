@@ -142,8 +142,8 @@ def determine_confidence(
     """Heuristic confidence scoring based on retrieval quality."""
     if "unable to find" in response_text.lower():
         return "low"
-    if max_similarity >= 0.85 and chunks_count >= 3:
+    if max_similarity >= 0.55 and chunks_count >= 3:
         return "high"
-    if max_similarity >= 0.70:
+    if max_similarity >= 0.38:
         return "medium"
     return "low"

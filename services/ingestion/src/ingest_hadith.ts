@@ -34,7 +34,9 @@ const COLLECTIONS = [
   { slug: 'nasai',    sunnahSlug: 'nasai',     githubId: 'eng-nasai' },
   { slug: 'ibnmajah', sunnahSlug: 'ibnmajah',  githubId: 'eng-ibnmajah' },
   { slug: 'malik',    sunnahSlug: 'malik',     githubId: 'eng-malik' },
-  { slug: 'ahmad',    sunnahSlug: 'ahmad',     githubId: 'eng-ahmad' },
+  // Ahmad is not available in the fawazahmed0 GitHub fallback dataset;
+  // requires a sunnah.com API key — skipped in fallback mode.
+  // { slug: 'ahmad', sunnahSlug: 'ahmad', githubId: 'eng-ahmad' },
 ];
 
 const limit = pLimit(2);

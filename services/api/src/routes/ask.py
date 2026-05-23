@@ -126,6 +126,12 @@ async def ask_question(
           (question_id, answer_text, citations, confidence, model_version,
            retrieved_chunk_ids, is_cached, cache_key)
         VALUES ($1,$2,$3::jsonb,$4,$5,$6::jsonb,$7,$8)
+        ON CONFLICT (cache_key) DO UPDATE SET
+          answer_text = EXCLUDED.answer_text,
+          citations = EXCLUDED.citations,
+          confidence = EXCLUDED.confidence,
+          model_version = EXCLUDED.model_version,
+          retrieved_chunk_ids = EXCLUDED.retrieved_chunk_ids
         RETURNING id
         """,
         question_id,

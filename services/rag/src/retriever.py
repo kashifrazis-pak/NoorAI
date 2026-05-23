@@ -140,7 +140,7 @@ async def retrieve_context(
                    arabic_text, translations, narrator_chain,
                    1 - (embedding_vector <=> $1::vector) AS similarity
             FROM hadith
-            WHERE grade IN ('sahih', 'hasan')
+            WHERE grade IN ('sahih', 'hasan', 'unknown')
             ORDER BY embedding_vector <=> $1::vector
             LIMIT $2
             """,
